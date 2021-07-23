@@ -13,25 +13,25 @@ function cat(path) {
 
 async function webCat(url) {
   res = await axios.get(url);
-  return res;
+  return res.data;
 }
 
-async function printText(path) {
+async function outputText(path) {
   if (path.startsWith("http")) {
     data = await webCat(path);
   } else {
     data = cat(path);
   }
-  console.log(data)
+  return data;
 }
 
-function main() {
+async function main() {
   let path = process.argv[2];
 
   if (path == '--out') {
     output = process.argv[3];
     input = process.argv[4];
-    data = cat(input);
+    data = await outputText(input);
     
     fs.writeFile(output,data,'utf8', function(err){
       if (err){
@@ -41,8 +41,12 @@ function main() {
       console.log('Success!');
     });
   } else {
-    printText(path);
+    data = await outputText(path);
+    console.log(data);
   }
 }
 
 main();
+
+// let path = process.argv[2];
+// outputText(path)
